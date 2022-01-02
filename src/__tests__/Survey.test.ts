@@ -1,4 +1,5 @@
 import resquest from "supertest";
+import { getConnection } from "typeorm";
 import { app } from "../app";
 import createConnection from "../database";
 
@@ -7,6 +8,13 @@ describe("surveys", () => {
     const conection = await createConnection();
     await conection.runMigrations();
   });
+
+  afterAll(async () => {
+    const connection = getConnection();
+    await connection.dropDatabase();
+    await connection.close();
+  });
+
   it("Should be able to create a new survey", async () => {
     const response = await resquest(app).post("/surveys").send({
       title: "Title Example",
